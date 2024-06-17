@@ -18,3 +18,32 @@ class Aria2Client:
         self._session = Session()
         self.rpc_url = f"http://{host}:{port}/jsonrpc"
 
+    def _request(self, method: Union[str, None] = None, params: Optional[List[Any]] = None) -> Dict[str, Any]:
+        """
+        Sends an RPC request to the server made for internal use.
+        Do not call this method directly unless you know what you are doing.
+
+        Args:
+            method (Union[str, None], optional): The RPC method to call.
+            params (Optional[List[Any]], optional): Parameters to include in the RPC call.
+
+        Returns:
+            Dict[str, Any]: The response from the RPC server.
+        """
+
+        payload = { 
+            "jsonrpc": "2.0",
+            "params": params or [],
+            "id": uuid4().hex[:16]
+        }
+
+        if method:
+            payload["method"] = method
+
+        if self.secret:
+            payload["params"].insert(0, f"token:{self.secret}")
+
+        resp = loads(self._session.post(self.rpc_url, data=dumps(payload)).text)
+        # TODO: Create an error map and implement error handling here
+        return resp
+
