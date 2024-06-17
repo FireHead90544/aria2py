@@ -47,3 +47,21 @@ class Aria2Client:
         # TODO: Create an error map and implement error handling here
         return resp
 
+    def get_version(self, **kwargs) -> Union[str, Dict[str, Any]]:
+        """
+        Retrieves the version information from the aria2 RPC server.
+
+        Args:
+            **kwargs: Additional keyword arguments passed to modify behavior.
+                - raw (bool, optional): If True, returns the raw response from rpc server as it is.
+
+        Returns:
+            Union[str, Dict[str, Any]]: The version information as a string or a dictionary, depending on the 'raw' argument.
+        """
+
+        resp = self._request("aria2.getVersion")
+
+        if kwargs.pop("raw", None):
+            return resp
+        
+        return resp["result"]["version"]
