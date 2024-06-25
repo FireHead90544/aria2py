@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  lint-and-test:
+  build:
 
     runs-on: ubuntu-latest
 
@@ -25,6 +25,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install pylint pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install aria2
+      run: sudo apt-get install -y aria2
+    - name: Start aria2 in RPC server mode
+      run: |
+        nohup aria2c --enable-rpc > /dev/null 2>&1 &
     - name: Lint with pylint
       run: |
         pylint --rcfile=.pylintrc **/*.py
