@@ -1,7 +1,9 @@
-from requests import Session
+# pylint: disable=line-too-long
 from json import loads, dumps
 from typing import List, Optional, Dict, Any, Union
 from uuid import uuid4
+from requests import Session
+
 
 class Aria2Client:
     """
@@ -13,12 +15,18 @@ class Aria2Client:
         secret (str, optional): The secret token used for authentication. Defaults to ''.
     """
 
-    def __init__(self, host: str = "localhost", port: int = 6800, secret: str = '') -> None:
+    def __init__(
+        self, host: str = "localhost", port: int = 6800, secret: str = ""
+    ) -> None:
         self.secret = secret
         self._session = Session()
         self.rpc_url = f"http://{host}:{port}/jsonrpc"
 
-    def _request(self, method: Union[str, None] = None, params: Optional[List[Any]] = None) -> Dict[str, Any]:
+    def _request(
+        self,
+        method: Union[str, None] = None,
+        params: Optional[List[Any]] = None,
+    ) -> Dict[str, Any]:
         """
         Sends an RPC request to the server made for internal use.
         Do not call this method directly unless you know what you are doing.
@@ -31,10 +39,10 @@ class Aria2Client:
             Dict[str, Any]: The response from the RPC server.
         """
 
-        payload = { 
+        payload = {
             "jsonrpc": "2.0",
             "params": params or [],
-            "id": uuid4().hex[:16]
+            "id": uuid4().hex[:16],
         }
 
         if method:
@@ -43,7 +51,9 @@ class Aria2Client:
         if self.secret:
             payload["params"].insert(0, f"token:{self.secret}")
 
-        resp = loads(self._session.post(self.rpc_url, data=dumps(payload)).text)
+        resp = loads(
+            self._session.post(self.rpc_url, data=dumps(payload)).text
+        )
         # TODO: Create an error map and implement error handling here
         return resp
 
@@ -63,5 +73,5 @@ class Aria2Client:
 
         if kwargs.pop("raw", None):
             return resp
-        
+
         return resp["result"]["version"]

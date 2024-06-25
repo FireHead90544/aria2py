@@ -1,3 +1,5 @@
+# pylint: disable=line-too-long
+
 class Aria2Error(Exception):
     """Base exception for all exceptions raised by this library."""
 
@@ -8,6 +10,7 @@ class Aria2Error(Exception):
 
     def __str__(self) -> str:
         return f"{self.message} ({self.code})"
+
 
 class ClientSentInvalidRequestError(Aria2Error):
     """Raised when the client sends an invalid request with malformed data to the server."""
